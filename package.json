@@ -8,11 +8,14 @@
     "start": "next start",
     "lint": "next lint",
     "db:start": "docker run -d --name postgres -p 5432:5432 -v ./postgres-data:/var/lib/postgresql/data --env-file .env --platform linux/amd64 postgres:15-alpine",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:setup": "pnpx prisma db push"
+    "db:setup": "pnpx prisma db push",
+    "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "5.18.0",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.435.0",
@@ -20,8 +23,10 @@
     "prisma": "^5.18.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.52.2",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",
