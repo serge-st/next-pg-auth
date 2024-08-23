@@ -3,7 +3,7 @@ import { isNumber } from '@/lib/utils/helpers';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isApiRequest = pathname.includes('/api');
+  const isApiRequest = /^\/api/gi.test(pathname);
   const id = pathname.split('/').pop();
 
   if (id && isNumber(id)) return NextResponse.next();
