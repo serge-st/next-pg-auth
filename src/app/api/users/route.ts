@@ -1,9 +1,17 @@
 import prisma from '@/lib/db/prisma';
+import { getUserWithRoleArray } from '@/lib/utils/helpers';
 
 async function getUsers() {
   return await prisma.user.findMany({
     omit: {
       password: true,
+    },
+    include: {
+      roles: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 }
@@ -11,7 +19,8 @@ async function getUsers() {
 export async function GET() {
   try {
     const users = await getUsers();
-    return new Response(JSON.stringify(users), {
+    const transormedUsers = users.map((u) => getUserWithRoleArray(u));
+    return new Response(JSON.stringify(transormedUsers), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
     });

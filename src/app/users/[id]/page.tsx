@@ -1,13 +1,13 @@
 import { NextPage } from 'next';
 
-interface UserProps {
+interface UserPageProps {
   params: {
     id: string;
   };
 }
 
-const User: NextPage<UserProps> = ({ params: { id } }) => {
+const UserPage: NextPage<UserPageProps> = ({ params: { id } }) => {
   return <h1 className="w-full text-center text-lg">User {id}</h1>;
 };
 
-export default User;
+export default UserPage;

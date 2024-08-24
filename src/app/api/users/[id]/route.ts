@@ -1,11 +1,18 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/db/prisma';
-import { isNumber } from '@/lib/utils/helpers';
+import { getUserWithRoleArray, isNumber } from '@/lib/utils/helpers';
 
 async function getUserById(id: string) {
   return await prisma.user.findUnique({
     omit: {
       password: true,
+    },
+    include: {
+      roles: {
+        select: {
+          name: true,
+        },
+      },
     },
     where: { id: Number(id) },
   });
@@ -27,7 +34,9 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return new Response(JSON.stringify(user), {
+    const transformedUser = getUserWithRoleArray(user);
+
+    return new Response(JSON.stringify(transformedUser), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
     });
