@@ -1,7 +1,11 @@
 import prisma from '@/lib/db/prisma';
 
 async function getUsers() {
-  return await prisma.user.findMany();
+  return await prisma.user.findMany({
+    omit: {
+      password: true,
+    },
+  });
 }
 
 export async function GET() {

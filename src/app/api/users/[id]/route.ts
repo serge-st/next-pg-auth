@@ -4,6 +4,9 @@ import { isNumber } from '@/lib/utils/helpers';
 
 async function getUserById(id: string) {
   return await prisma.user.findUnique({
+    omit: {
+      password: true,
+    },
     where: { id: Number(id) },
   });
 }
