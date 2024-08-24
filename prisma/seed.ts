@@ -55,6 +55,7 @@ const addTestUsers = async () => {
 const load = async () => {
   try {
     await addRoles();
+    // TODO: add initial admin user (from env vars)
     await addTestUsers();
   } catch (e) {
     console.error(e);

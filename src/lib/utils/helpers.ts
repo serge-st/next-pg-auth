@@ -28,3 +28,7 @@ type UserWithRoles = Prisma.UserGetPayload<{
 export function getUserWithRoleArray(user: UserWithRoles) {
   return { ...user, roles: user.roles.map((r) => r.name) };
 }
+
+export function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
