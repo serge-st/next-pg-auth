@@ -80,10 +80,13 @@ export const AddUserForm: FC<AddUserFormProps> = ({ availableRoles }) => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} autoComplete="off" />
               </FormControl>
-              <FormDescription>The email will be used as a login</FormDescription>
-              <FormMessage />
+              {form.formState.errors.email ? (
+                <FormMessage />
+              ) : (
+                <FormDescription>The email will be used as a login</FormDescription>
+              )}
             </FormItem>
           )}
         />
@@ -97,8 +100,11 @@ export const AddUserForm: FC<AddUserFormProps> = ({ availableRoles }) => {
               <FormControl>
                 <Input type="password" autoComplete="off" {...field} />
               </FormControl>
-              <FormDescription>Minimum 8 characters</FormDescription>
-              <FormMessage />
+              {form.formState.errors.password ? (
+                <FormMessage />
+              ) : (
+                <FormDescription>Minimum 8 characters</FormDescription>
+              )}
             </FormItem>
           )}
         />
@@ -123,13 +129,18 @@ export const AddUserForm: FC<AddUserFormProps> = ({ availableRoles }) => {
                   </SelectContent>
                 </Select>
               </FormControl>
-              <FormDescription>Please select a role</FormDescription>
-              <FormMessage />
+              {form.formState.errors.role ? (
+                <FormMessage />
+              ) : (
+                <FormDescription>Please select a role</FormDescription>
+              )}
             </FormItem>
           )}
         />
 
-        {formError?.message && <FormMessage>{formError.message}</FormMessage>}
+        <div className="h-5">
+          <FormMessage>{formError?.message}</FormMessage>
+        </div>
 
         <Button type="submit" disabled={isPending}>
           {isPending ? <Icons.spinner className="animate-spin" /> : 'Submit'}
