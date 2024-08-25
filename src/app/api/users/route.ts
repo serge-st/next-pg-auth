@@ -1,3 +1,4 @@
+import { ApiErrorReponse } from '@/lib/api/api-error-response';
 import prisma from '@/lib/db/prisma';
 import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -23,10 +24,7 @@ function checkHeaders(request: NextRequest) {
   const ctHeader = request.headers.get('Content-Type');
 
   if (!ctHeader || ctHeader !== 'application/json') {
-    return new Response(JSON.stringify({ error: 'Invalid Content-Type' }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 400,
-    });
+    return new ApiErrorReponse('Invalid Content-Type', 400);
   }
 
   return undefined;
@@ -49,10 +47,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: 'An error occurred' }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500,
-    });
+    return new ApiErrorReponse('An error occurred', 500);
   }
 }
 
@@ -65,16 +60,14 @@ const userSchema = z.object({
 function validateUser(body: any) {
   const validationResult = userSchema.safeParse(body);
   if (!validationResult.success) {
-    return new Response(JSON.stringify({ errors: validationResult.error.errors }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new ApiErrorReponse(validationResult.error, 400);
   }
 
   return undefined;
 }
 
 export async function POST(request: NextRequest) {
+  await delay(2000);
   const incorrectHeader = checkHeaders(request);
 
   if (incorrectHeader) return incorrectHeader;
@@ -102,22 +95,13 @@ export async function POST(request: NextRequest) {
     console.error(error);
 
     if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-      return new Response(JSON.stringify({ error: 'User with this email already exists' }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 400,
-      });
+      return new ApiErrorReponse('User with this email already exists', 400);
     }
 
     if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-      return new Response(JSON.stringify({ error: 'Role does not exist' }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 400,
-      });
+      return new ApiErrorReponse('Role does not exist', 400);
     }
 
-    return new Response(JSON.stringify({ error: 'An error occurred' }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500,
-    });
+    return new ApiErrorReponse('An error occurred', 500);
   }
 }
