@@ -57,6 +57,7 @@ export const AddUserForm: FC<AddUserFormProps> = ({ availableRoles }) => {
       password: '',
       role: '',
     },
+    mode: 'onBlur',
   });
 
   useEffect(() => {
