@@ -13,7 +13,7 @@ import {
   FormDescription,
   FormMessage,
 } from '@/components/ui/form';
-import { Input, Button, Icons } from '@/components/ui';
+import { Input, Button, Icons, useToast } from '@/components/ui';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../ui/select';
 import { capitalizeFirstLetter } from '@/lib/utils/helpers';
 import { apiClient } from '@/lib/api/api-client';
@@ -25,6 +25,7 @@ interface AddUserFormProps {
 }
 
 export const AddUserForm: FC<AddUserFormProps> = ({ availableRoles }) => {
+  const { toast } = useToast();
   const formSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8),
@@ -61,8 +62,14 @@ export const AddUserForm: FC<AddUserFormProps> = ({ availableRoles }) => {
   });
 
   useEffect(() => {
-    isSuccess && form.reset();
-  }, [, form, isSuccess]);
+    if (isSuccess) {
+      const { email } = form.getValues();
+      toast({
+        title: `User ${email} was created`,
+      });
+      form.reset();
+    }
+  }, [form, isSuccess, toast]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     mutate(values);
