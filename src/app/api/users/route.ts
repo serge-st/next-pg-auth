@@ -1,4 +1,4 @@
-import { ApiErrorReponse } from '@/lib/api';
+import { ApiErrorReponse, ApiResponse } from '@/lib/api';
 import prisma from '@/lib/db/prisma';
 import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -38,10 +38,8 @@ export async function GET(request: NextRequest) {
   try {
     const users = await getUsers();
     const transormedUsers = users.map((u) => getUserWithRoleArray(u));
-    return new Response(JSON.stringify(transormedUsers), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 200,
-    });
+
+    return new ApiResponse(transormedUsers, 200);
   } catch (error) {
     console.error(error);
     return new ApiErrorReponse('An error occurred', 500);
@@ -86,7 +84,7 @@ export async function POST(request: NextRequest) {
         },
       },
     });
-    return new Response('', { status: 201 });
+    return new ApiResponse('', 201);
   } catch (error) {
     console.error(error);
 

@@ -1,6 +1,10 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { getUserWithRoleArray, isNumber } from '@/lib/utils/helpers';
+import { ApiErrorReponse, ApiResponse } from '@/lib/api';
+
+//TODO delete after testing
+const delay = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function getUserById(id: string) {
   return await prisma.user.findUnique({
@@ -18,8 +22,6 @@ async function getUserById(id: string) {
   });
 }
 
-const delay = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export async function GET(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const id = pathname.split('/').pop();
@@ -32,23 +34,14 @@ export async function GET(request: NextRequest) {
     const user = await getUserById(id);
 
     if (!user) {
-      return new Response(JSON.stringify({ error: 'User not found' }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 404,
-      });
+      return new ApiErrorReponse('User not found', 404);
     }
 
     const transformedUser = getUserWithRoleArray(user);
 
-    return new Response(JSON.stringify(transformedUser), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 200,
-    });
+    return new ApiResponse(transformedUser, 200);
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: 'An error occurred' }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500,
-    });
+    return new ApiErrorReponse('An error occurred', 500);
   }
 }

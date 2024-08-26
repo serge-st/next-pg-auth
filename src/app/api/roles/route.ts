@@ -1,3 +1,4 @@
+import { ApiErrorReponse, ApiResponse } from '@/lib/api';
 import prisma from '@/lib/db/prisma';
 import { NextRequest } from 'next/server';
 
@@ -14,15 +15,10 @@ export async function GET(request: NextRequest) {
 
     const roles = await getRoles(namesOnly);
 
-    return new Response(JSON.stringify(roles), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 200,
-    });
+    return new ApiResponse(roles, 200);
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: 'An error occurred' }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500,
-    });
+
+    return new ApiErrorReponse('An error occurred', 500);
   }
 }
