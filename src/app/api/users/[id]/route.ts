@@ -4,7 +4,7 @@ import { getUserWithRoleArray, isNumber } from '@/lib/utils/helpers';
 import { ApiErrorReponse, ApiResponse, validateBody } from '@/lib/api';
 import { userSchema } from '../user-schema';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { hashPassword } from '@/lib/api/password-utils';
+import { hashPassword } from '@/lib/api';
 
 //TODO delete after testing
 const delay = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

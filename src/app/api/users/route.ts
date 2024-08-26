@@ -4,7 +4,7 @@ import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { NextRequest } from 'next/server';
 import { userSchema } from './user-schema';
-import { hashPassword } from '@/lib/api/password-utils';
+import { hashPassword } from '@/lib/api';
 
 async function getUsers() {
   return await prisma.user.findMany({
@@ -21,11 +21,7 @@ async function getUsers() {
   });
 }
 
-async function getRoles() {
-  return await prisma.role.findMany();
-}
-
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const users = await getUsers();
     const transormedUsers = users.map((u) => getUserWithRoleArray(u));
