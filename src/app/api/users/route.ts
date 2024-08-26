@@ -30,9 +30,6 @@ function checkHeaders(request: NextRequest) {
   return undefined;
 }
 
-// TODO remove afeter testing
-const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
-
 export async function GET(request: NextRequest) {
   const incorrectHeader = checkHeaders(request);
 
@@ -67,7 +64,6 @@ function validateUser(body: any) {
 }
 
 export async function POST(request: NextRequest) {
-  await delay(2000);
   const incorrectHeader = checkHeaders(request);
 
   if (incorrectHeader) return incorrectHeader;

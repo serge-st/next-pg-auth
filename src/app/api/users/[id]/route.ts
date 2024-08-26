@@ -18,6 +18,8 @@ async function getUserById(id: string) {
   });
 }
 
+const delay = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export async function GET(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const id = pathname.split('/').pop();
@@ -25,6 +27,8 @@ export async function GET(request: NextRequest) {
   if (!id || !isNumber(id)) return new Response('', { status: 400 });
 
   try {
+    // await delay(2000);
+
     const user = await getUserById(id);
 
     if (!user) {
