@@ -23,7 +23,7 @@ export const UsersTable: FC<UsersTableProps> = ({ users }) => {
   console.log(users);
   return (
     <Table>
-      <TableCaption>A list of app users.</TableCaption>
+      <TableCaption>All app users.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Email</TableHead>
