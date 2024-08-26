@@ -70,6 +70,12 @@ async function updateUserById(id: string, body: Record<string, unknown>) {
   });
 }
 
+async function deleteUserById(id: string) {
+  await prisma.user.delete({
+    where: { id: Number(id) },
+  });
+}
+
 function extractUserId(request: NextRequest): string | undefined {
   const { pathname } = request.nextUrl;
   const id = pathname.split('/').pop();
@@ -125,6 +131,22 @@ export async function PATCH(request: NextRequest) {
       return new ApiErrorReponse('Role does not exist', 400);
     }
 
+    console.error(error);
+    return new ApiErrorReponse('An error occurred', 500);
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const id = extractUserId(request);
+  if (!id) return new ApiErrorReponse('Invalid ID', 400);
+
+  try {
+    await deleteUserById(id);
+    return new ApiResponse('', 200);
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+      return new ApiErrorReponse('User does not exist', 400);
+    }
     console.error(error);
     return new ApiErrorReponse('An error occurred', 500);
   }
