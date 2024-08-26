@@ -16,6 +16,12 @@ export function withApiHeadersMiddleware(middleware: CustomMiddleware) {
       if (!ctHeader || ctHeader !== 'application/json') {
         return new ApiErrorReponse('Invalid Content-Type', 400);
       }
+
+      try {
+        await request.json();
+      } catch {
+        return new ApiErrorReponse('Invalid JSON body', 400);
+      }
     }
 
     return middleware(request, event, response);

@@ -4,6 +4,7 @@ import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { NextRequest } from 'next/server';
 import { userSchema } from './user-schema';
+import { hashPassword } from '@/lib/api/password-utils';
 
 async function getUsers() {
   return await prisma.user.findMany({
@@ -18,6 +19,10 @@ async function getUsers() {
       },
     },
   });
+}
+
+async function getRoles() {
+  return await prisma.role.findMany();
 }
 
 export async function GET(request: NextRequest) {
@@ -39,11 +44,12 @@ export async function POST(request: NextRequest) {
     const validationError = validateBody(body, userSchema);
     if (validationError) return validationError;
 
+    const hashedPassword = await hashPassword(body.password);
+
     await prisma.user.create({
       data: {
         email: body.email,
-        // TODO: encrypt password
-        password: body.password,
+        password: hashedPassword,
         roles: {
           connect: {
             name: body.role,
@@ -53,20 +59,14 @@ export async function POST(request: NextRequest) {
     });
     return new ApiResponse('', 201);
   } catch (error) {
-    console.error(error);
-
-    if (error instanceof SyntaxError && error.message.includes('JSON')) {
-      return new ApiErrorReponse('Invalid Body', 400);
-    }
-
     if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
       return new ApiErrorReponse('User with this email already exists', 400);
     }
-
     if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
       return new ApiErrorReponse('Role does not exist', 400);
     }
 
+    console.error(error);
     return new ApiErrorReponse('An error occurred', 500);
   }
 }
