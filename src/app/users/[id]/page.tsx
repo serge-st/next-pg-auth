@@ -1,12 +1,11 @@
 'use client';
 
-import { apiClient } from '@/lib/api/api-client';
 import { useQuery } from '@tanstack/react-query';
-import { NextPage } from 'next';
 import LoadingPage from '../loading';
 import { FC } from 'react';
-import { isApiError } from '@/lib/api/is-api-error';
-import { UserWithRoleAsArray } from '@/lib/types/user-with-role-as-array';
+import { isApiError, apiClient } from '@/lib/api';
+import { UserWithRoleAsArray } from '@/lib/types';
+import { NextPage } from 'next';
 
 interface UserPageProps {
   params: {

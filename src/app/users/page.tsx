@@ -1,7 +1,7 @@
 import { AddUserForm } from '@/components/add-user-form';
-import { apiClient } from '@/lib/api/api-client';
+import { apiClient } from '@/lib/api';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { UsersTable } from '@/components/users-table/users-table';
+import { UsersTable } from '@/components/users-table';
 
 const fetchUsers = async () => {
   const result = await apiClient.get('/users');

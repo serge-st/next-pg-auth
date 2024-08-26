@@ -13,12 +13,20 @@ import {
   FormDescription,
   FormMessage,
 } from '@/components/ui/form';
-import { Input, Button, Icons, useToast } from '@/components/ui';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../ui/select';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { capitalizeFirstLetter } from '@/lib/utils/helpers';
-import { apiClient } from '@/lib/api/api-client';
+import { apiClient, isApiError } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
-import { isApiError } from '@/lib/api/is-api-error';
+import { Button } from '@/components/ui/button';
+import { Icons } from '@/components/ui/icons';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 
 interface AddUserFormProps {
   availableRoles: string[];

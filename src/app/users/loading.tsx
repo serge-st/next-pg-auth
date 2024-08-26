@@ -1,4 +1,4 @@
-import { Icons } from '@/components/ui';
+import { Icons } from '@/components/ui/icons';
 
 export default function Loading() {
   return (

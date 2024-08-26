@@ -10,10 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { UserWithRoleAsArray } from '@/lib/types/user-with-role-as-array';
+import { UserWithRoleAsArray } from '@/lib/types';
 import { capitalizeFirstLetter } from '@/lib/utils/helpers';
 import Link from 'next/link';
-import { Button } from '../ui';
+import { Button } from '@/components/ui/button';
 
 interface UsersTableProps {
   users: UserWithRoleAsArray[];

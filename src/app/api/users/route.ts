@@ -1,4 +1,4 @@
-import { ApiErrorReponse } from '@/lib/api/api-error-response';
+import { ApiErrorReponse } from '@/lib/api';
 import prisma from '@/lib/db/prisma';
 import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
