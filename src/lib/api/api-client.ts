@@ -3,7 +3,6 @@ import { HOST } from '@/lib/utils/helpers';
 
 export const apiClient = axios.create({
   baseURL: `${HOST}/api`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
+
+apiClient.defaults.headers.common['Content-Type'] = 'application/json';

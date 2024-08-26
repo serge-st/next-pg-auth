@@ -1,9 +1,9 @@
-import { ApiErrorReponse, ApiResponse } from '@/lib/api';
+import { ApiErrorReponse, ApiResponse, validateBody } from '@/lib/api';
 import prisma from '@/lib/db/prisma';
 import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { NextRequest } from 'next/server';
-import { z } from 'zod';
+import { userSchema } from './user-schema';
 
 async function getUsers() {
   return await prisma.user.findMany({
@@ -20,21 +20,7 @@ async function getUsers() {
   });
 }
 
-function checkHeaders(request: NextRequest) {
-  const ctHeader = request.headers.get('Content-Type');
-
-  if (!ctHeader || ctHeader !== 'application/json') {
-    return new ApiErrorReponse('Invalid Content-Type', 400);
-  }
-
-  return undefined;
-}
-
 export async function GET(request: NextRequest) {
-  const incorrectHeader = checkHeaders(request);
-
-  if (incorrectHeader) return incorrectHeader;
-
   try {
     const users = await getUsers();
     const transormedUsers = users.map((u) => getUserWithRoleArray(u));
@@ -46,30 +32,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-const userSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  role: z.string(),
-});
-
-function validateUser(body: any) {
-  const validationResult = userSchema.safeParse(body);
-  if (!validationResult.success) {
-    return new ApiErrorReponse(validationResult.error, 400);
-  }
-
-  return undefined;
-}
-
 export async function POST(request: NextRequest) {
-  const incorrectHeader = checkHeaders(request);
-
-  if (incorrectHeader) return incorrectHeader;
-
   try {
     const body = await request.json();
 
-    const validationError = validateUser(body);
+    const validationError = validateBody(body, userSchema);
     if (validationError) return validationError;
 
     await prisma.user.create({
@@ -87,6 +54,10 @@ export async function POST(request: NextRequest) {
     return new ApiResponse('', 201);
   } catch (error) {
     console.error(error);
+
+    if (error instanceof SyntaxError && error.message.includes('JSON')) {
+      return new ApiErrorReponse('Invalid Body', 400);
+    }
 
     if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
       return new ApiErrorReponse('User with this email already exists', 400);

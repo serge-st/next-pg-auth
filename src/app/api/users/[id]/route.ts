@@ -22,20 +22,23 @@ async function getUserById(id: string) {
   });
 }
 
-export async function GET(request: NextRequest) {
+function extractUserId(request: NextRequest): string | undefined {
   const { pathname } = request.nextUrl;
   const id = pathname.split('/').pop();
 
-  if (!id || !isNumber(id)) return new Response('', { status: 400 });
+  if (!id || !isNumber(id)) return undefined;
+
+  return id;
+}
+
+export async function GET(request: NextRequest) {
+  const id = extractUserId(request);
+  if (!id) return new ApiErrorReponse('Invalid ID', 400);
 
   try {
     // await delay(2000);
-
     const user = await getUserById(id);
-
-    if (!user) {
-      return new ApiErrorReponse('User not found', 404);
-    }
+    if (!user) return new ApiErrorReponse('User not found', 404);
 
     const transformedUser = getUserWithRoleArray(user);
 
@@ -44,4 +47,15 @@ export async function GET(request: NextRequest) {
     console.error(error);
     return new ApiErrorReponse('An error occurred', 500);
   }
+}
+
+export async function PATCH(request: NextRequest) {
+  // TODO complete method
+  const id = extractUserId(request);
+  if (!id) return new ApiErrorReponse('Invalid ID', 400);
+
+  const user = await getUserById(id);
+  if (!user) return new ApiErrorReponse('User not found', 404);
+
+  return new ApiResponse({ message: 'PATCH request' }, 200);
 }
