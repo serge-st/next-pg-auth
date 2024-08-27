@@ -20,7 +20,6 @@ interface UsersTableProps {
 }
 
 export const UsersTable: FC<UsersTableProps> = ({ users }) => {
-  console.log(users);
   return (
     <Table>
       <TableCaption>All app users.</TableCaption>

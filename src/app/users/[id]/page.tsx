@@ -6,6 +6,7 @@ import { FC } from 'react';
 import { isApiError, apiClient } from '@/lib/api';
 import { UserWithRoleAsArray } from '@/lib/types';
 import { NextPage } from 'next';
+import { UserEditMenu } from '@/components/user-edit-menu';
 
 interface UserPageProps {
   params: {
@@ -24,9 +25,9 @@ const UserError: FC<{ error: unknown }> = ({ error }) => {
 };
 
 const UserPage: NextPage<UserPageProps> = ({ params: { id } }) => {
-  const { isPending, error, data } = useQuery<UserWithRoleAsArray>({
+  const { isPending, error, data, isSuccess } = useQuery<UserWithRoleAsArray>({
     queryKey: ['userData', id],
-    queryFn: () => apiClient.get(`/users/${id}`).then((res) => res.data),
+    queryFn: () => apiClient.get<UserWithRoleAsArray>(`/users/${id}`).then((res) => res.data),
     retry: 1,
   });
 
@@ -34,14 +35,10 @@ const UserPage: NextPage<UserPageProps> = ({ params: { id } }) => {
 
   if (isPending) return <LoadingPage />;
 
-  console.log(data);
-
   return (
     <>
       <h1 className="w-full text-center text-2xl">Edit User Details</h1>
-      {/* user details including timestamps */}
-      {/* allow to change user details */}
-      {/* allow to delete user */}
+      {isSuccess && <UserEditMenu user={data} />}
     </>
   );
 };

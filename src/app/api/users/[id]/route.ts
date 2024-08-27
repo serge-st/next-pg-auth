@@ -90,7 +90,6 @@ export async function GET(request: NextRequest) {
   if (!id) return new ApiErrorReponse('Invalid ID', 400);
 
   try {
-    // await delay(2000);
     const user = await getUserById(id);
     if (!user) return new ApiErrorReponse('User not found', 404);
 
