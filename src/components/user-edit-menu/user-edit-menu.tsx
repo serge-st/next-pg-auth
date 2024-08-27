@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import {
   TableHeader,
   TableRow,
@@ -7,10 +7,10 @@ import {
   TableCell,
   Table,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
 import { UserWithRoleAsArray } from '@/lib/types';
 import { capitalizeFirstLetter } from '@/lib/utils/helpers';
 import { UserDeleteDialog } from '../user-delete-dialog/user-delete-dialog';
+import { EditUserProperty } from '../edit-user-property';
 
 interface UserEditMenuProps {
   user: UserWithRoleAsArray;
@@ -19,16 +19,13 @@ interface UserEditMenuProps {
 export const UserEditMenu: FC<UserEditMenuProps> = ({ user }) => {
   return (
     <>
-      <Table>
+      <Table className="mx-auto max-w-5xl">
         <TableHeader>
           <TableRow>
             <TableHead>Id</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Role</TableHead>
-            <TableHead>Change Email</TableHead>
-            <TableHead>Change Password</TableHead>
-            <TableHead>Change Role</TableHead>
-            <TableHead>Delete</TableHead>
+            <TableHead className="text-center">Controls</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -36,16 +33,20 @@ export const UserEditMenu: FC<UserEditMenuProps> = ({ user }) => {
             <TableCell>{user.id}</TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>{user.roles.map((r) => capitalizeFirstLetter(r)).join(', ')}</TableCell>
-            <TableCell>
-              <Button>Update</Button>
-            </TableCell>
-            <TableCell>
-              <Button>Update</Button>
-            </TableCell>
-            <TableCell>
-              <Button>Update</Button>
-            </TableCell>
-            <TableCell>
+            <TableCell className="flex flex-col justify-between gap-2 lg:flex-row">
+              <EditUserProperty id={user.id} propertyToEdit="email" currentValue={user.email}>
+                Change Email
+              </EditUserProperty>
+              <EditUserProperty id={user.id} propertyToEdit="password">
+                Change Password
+              </EditUserProperty>
+              <EditUserProperty
+                id={user.id}
+                propertyToEdit="role"
+                currentValue={user.roles.join('')}
+              >
+                Change Role
+              </EditUserProperty>
               <UserDeleteDialog id={user.id} />
             </TableCell>
           </TableRow>
