@@ -108,8 +108,6 @@ export async function PATCH(request: NextRequest) {
   const id = extractUserId(request);
   if (!id) return new ApiErrorReponse('Invalid ID', 400);
 
-  await delay(2000);
-
   try {
     const user = await getUserById(id);
     if (!user) return new ApiErrorReponse('User not found', 404);

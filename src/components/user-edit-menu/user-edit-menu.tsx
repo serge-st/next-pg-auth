@@ -13,14 +13,12 @@ import { UserWithRoleAsArray } from '@/lib/types';
 import { capitalizeFirstLetter } from '@/lib/utils/helpers';
 import { UserDeleteDialog } from '../user-delete-dialog/user-delete-dialog';
 import { EditUserProperty } from '../edit-user-property';
-import { userSchema } from '@/app/api/users/user-schema';
 
 interface UserEditMenuProps {
   user: UserWithRoleAsArray;
-  refetch: () => void;
 }
 
-export const UserEditMenu: FC<UserEditMenuProps> = ({ user, refetch }) => {
+export const UserEditMenu: FC<UserEditMenuProps> = ({ user }) => {
   return (
     <>
       <Table className="mx-auto max-w-5xl">
@@ -41,10 +39,11 @@ export const UserEditMenu: FC<UserEditMenuProps> = ({ user, refetch }) => {
               <EditUserProperty id={user.id} propertyToEdit="email" initialValue={user.email}>
                 Change Email
               </EditUserProperty>
-              {/* <EditUserProperty id={user.id} propertyToEdit="email" initialValue={user.email}> */}
-              {/* <EditUserProperty id={user.id} propertyToEdit="password">
+              <EditUserProperty id={user.id} propertyToEdit="password">
                 Change Password
               </EditUserProperty>
+              {/* <EditUserProperty id={user.id} propertyToEdit="email" initialValue={user.email}> */}
+              {/* 
               <EditUserProperty
                 id={user.id}
                 propertyToEdit="role"
@@ -52,7 +51,8 @@ export const UserEditMenu: FC<UserEditMenuProps> = ({ user, refetch }) => {
               >
                 Change Role
               </EditUserProperty>
-              <UserDeleteDialog id={user.id} /> */}
+               */}
+              <UserDeleteDialog id={user.id} />
             </TableCell>
           </TableRow>
         </TableBody>

@@ -22,7 +22,7 @@ const ErrorPage: FC<ErrorPageProps> = ({ error, reset }) => {
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="flex w-full max-w-5xl flex-col items-center justify-between gap-8 text-sm">
         <div>
-          <h1 className="w-full text-center text-lg text-red-600">An Error Occured</h1>
+          <h1 className="w-full text-center text-lg text-destructive">An Error Occured</h1>
           {error.message && <p className="text-center text-sm text-gray-500">{error.message}</p>}
         </div>
 
