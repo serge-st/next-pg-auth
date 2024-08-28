@@ -1,3 +1,5 @@
+'use client';
+
 import { FC } from 'react';
 import {
   TableHeader,
@@ -11,12 +13,14 @@ import { UserWithRoleAsArray } from '@/lib/types';
 import { capitalizeFirstLetter } from '@/lib/utils/helpers';
 import { UserDeleteDialog } from '../user-delete-dialog/user-delete-dialog';
 import { EditUserProperty } from '../edit-user-property';
+import { userSchema } from '@/app/api/users/user-schema';
 
 interface UserEditMenuProps {
   user: UserWithRoleAsArray;
+  refetch: () => void;
 }
 
-export const UserEditMenu: FC<UserEditMenuProps> = ({ user }) => {
+export const UserEditMenu: FC<UserEditMenuProps> = ({ user, refetch }) => {
   return (
     <>
       <Table className="mx-auto max-w-5xl">
@@ -34,20 +38,21 @@ export const UserEditMenu: FC<UserEditMenuProps> = ({ user }) => {
             <TableCell>{user.email}</TableCell>
             <TableCell>{user.roles.map((r) => capitalizeFirstLetter(r)).join(', ')}</TableCell>
             <TableCell className="flex flex-col justify-between gap-2 lg:flex-row">
-              <EditUserProperty id={user.id} propertyToEdit="email" currentValue={user.email}>
+              <EditUserProperty id={user.id} propertyToEdit="email" initialValue={user.email}>
                 Change Email
               </EditUserProperty>
-              <EditUserProperty id={user.id} propertyToEdit="password">
+              {/* <EditUserProperty id={user.id} propertyToEdit="email" initialValue={user.email}> */}
+              {/* <EditUserProperty id={user.id} propertyToEdit="password">
                 Change Password
               </EditUserProperty>
               <EditUserProperty
                 id={user.id}
                 propertyToEdit="role"
-                currentValue={user.roles.join('')}
+                initialValue={user.roles.join('')}
               >
                 Change Role
               </EditUserProperty>
-              <UserDeleteDialog id={user.id} />
+              <UserDeleteDialog id={user.id} /> */}
             </TableCell>
           </TableRow>
         </TableBody>

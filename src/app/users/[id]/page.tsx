@@ -25,9 +25,12 @@ const UserError: FC<{ error: unknown }> = ({ error }) => {
 };
 
 const UserPage: NextPage<UserPageProps> = ({ params: { id } }) => {
-  const { isPending, error, data, isSuccess } = useQuery<UserWithRoleAsArray>({
+  const { isPending, error, data, isSuccess, refetch } = useQuery<UserWithRoleAsArray>({
     queryKey: ['userData', id],
-    queryFn: () => apiClient.get<UserWithRoleAsArray>(`/users/${id}`).then((res) => res.data),
+    queryFn: () => {
+      console.log(`/users/${id} fetching...`);
+      return apiClient.get<UserWithRoleAsArray>(`/users/${id}`).then((res) => res.data);
+    },
     retry: 1,
   });
 
@@ -38,7 +41,7 @@ const UserPage: NextPage<UserPageProps> = ({ params: { id } }) => {
   return (
     <>
       <h1 className="w-full text-center text-2xl">Edit User Details</h1>
-      {isSuccess && <UserEditMenu user={data} />}
+      {isSuccess && <UserEditMenu user={data} refetch={refetch} />}
     </>
   );
 };
