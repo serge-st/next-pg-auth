@@ -18,9 +18,10 @@ import { userSchema } from '@/app/api/users/user-schema';
 import { z } from 'zod';
 import { capitalizeFirstLetter, cn } from '@/lib/utils/helpers';
 import { UserPageContext } from '@/app/users/[id]/page';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiClient, isApiError } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
+import { UserRoleSelect } from '../user-role-select';
 
 interface EditUserPropertyProps {
   children: ReactNode;
@@ -40,17 +41,31 @@ export const EditUserProperty: FC<EditUserPropertyProps> = ({
   const [inputError, setInputError] = useState<string | undefined>(undefined);
   const { refetch } = useContext(UserPageContext);
   const { toast } = useToast();
+  const isRoleEdit = propertyToEdit === 'role';
 
-  const { mutateAsync, isPending, isSuccess, error } = useMutation({
+  const handleError = (error: unknown) => {
+    const erroMessage = isApiError(error)
+      ? error.response.data.error.toString()
+      : 'Unexpected error occurred';
+    setInputError(erroMessage);
+  };
+
+  const { data: roles } = useQuery<string[]>({
+    queryKey: ['roles'],
+    queryFn: () =>
+      apiClient
+        .get(`/roles?names_only=true`)
+        .then((res) => res.data)
+        .catch((error) => handleError(error)),
+    retry: 1,
+    enabled: isRoleEdit,
+  });
+
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: (values: Partial<z.infer<typeof userSchema>>) => {
       return apiClient.patch(`/users/${id}`, values);
     },
-    onError: (error) => {
-      const erroMessage = isApiError(error)
-        ? error.response.data.error.toString()
-        : 'Unexpected error occurred';
-      setInputError(erroMessage);
-    },
+    onError: (error) => handleError(error),
   });
 
   const validate = (value: string): string | undefined => {
@@ -119,20 +134,26 @@ export const EditUserProperty: FC<EditUserPropertyProps> = ({
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label
-              htmlFor={propertyToEdit}
-              className={cn('text-right', !!inputError && 'text-destructive')}
-            >
-              {capitalizeFirstLetter(propertyToEdit)}
-            </Label>
-            <Input
-              id={propertyToEdit}
-              value={value}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-              autoComplete="off"
-              className="col-span-3"
-            />
+            {isRoleEdit ? (
+              <UserRoleSelect roles={roles || []} value={value} onSelectChange={setValue} />
+            ) : (
+              <>
+                <Label
+                  htmlFor={propertyToEdit}
+                  className={cn('text-right', !!inputError && 'text-destructive')}
+                >
+                  {capitalizeFirstLetter(propertyToEdit)}
+                </Label>
+                <Input
+                  id={propertyToEdit}
+                  value={value}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                  autoComplete="off"
+                  className="col-span-3"
+                />
+              </>
+            )}
           </div>
         </div>
         <DialogFooter>

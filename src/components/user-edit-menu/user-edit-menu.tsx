@@ -35,15 +35,13 @@ export const UserEditMenu: FC<UserEditMenuProps> = ({ user }) => {
             <TableCell>{user.id}</TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>{user.roles.map((r) => capitalizeFirstLetter(r)).join(', ')}</TableCell>
-            <TableCell className="flex flex-col justify-between gap-2 lg:flex-row">
+            <TableCell className="flex flex-col justify-evenly gap-2 lg:flex-row">
               <EditUserProperty id={user.id} propertyToEdit="email" initialValue={user.email}>
                 Change Email
               </EditUserProperty>
               <EditUserProperty id={user.id} propertyToEdit="password">
                 Change Password
               </EditUserProperty>
-              {/* <EditUserProperty id={user.id} propertyToEdit="email" initialValue={user.email}> */}
-              {/* 
               <EditUserProperty
                 id={user.id}
                 propertyToEdit="role"
@@ -51,7 +49,6 @@ export const UserEditMenu: FC<UserEditMenuProps> = ({ user }) => {
               >
                 Change Role
               </EditUserProperty>
-               */}
               <UserDeleteDialog id={user.id} />
             </TableCell>
           </TableRow>

@@ -9,7 +9,6 @@ import { NextPage } from 'next';
 import { UserEditMenu } from '@/components/user-edit-menu';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/ui/icons';
 
 export const UserPageContext = createContext({ refetch: () => {} });
 
@@ -22,10 +21,7 @@ interface UserPageProps {
 const UserPage: NextPage<UserPageProps> = ({ params: { id } }) => {
   const { isPending, error, data, isSuccess, refetch } = useQuery<UserWithRoleAsArray>({
     queryKey: ['userData', id],
-    queryFn: () => {
-      console.log(`${Math.random()} /users/${id} fetching...`);
-      return apiClient.get<UserWithRoleAsArray>(`/users/${id}`).then((res) => res.data);
-    },
+    queryFn: () => apiClient.get<UserWithRoleAsArray>(`/users/${id}`).then((res) => res.data),
     retry: 1,
   });
 
