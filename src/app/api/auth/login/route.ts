@@ -6,6 +6,7 @@ import { z } from 'zod';
 import jwt from 'jsonwebtoken';
 import { UserWithRoleAsArray } from '@/lib/types';
 import sha256 from 'crypto-js/sha256';
+import { create } from 'domain';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -57,8 +58,10 @@ async function generateTokens(userInfo: UserWithRoleAsArray) {
 }
 
 async function saveToken(token: string, userId: number) {
-  await prisma.token.create({
-    data: {
+  await prisma.token.upsert({
+    where: { userId },
+    update: { refreshToken: sha256(token).toString() },
+    create: {
       refreshToken: sha256(token).toString(),
       user: { connect: { id: userId } },
     },
