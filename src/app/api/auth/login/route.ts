@@ -6,7 +6,6 @@ import { z } from 'zod';
 import jwt from 'jsonwebtoken';
 import { UserWithRoleAsArray } from '@/lib/types';
 import sha256 from 'crypto-js/sha256';
-import { create } from 'domain';
 
 const loginSchema = z.object({
   email: z.string().email(),
