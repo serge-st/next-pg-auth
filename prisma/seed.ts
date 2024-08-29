@@ -1,3 +1,4 @@
+import { hashPassword } from '../src/lib/api';
 import { ROLES } from './data';
 import { Prisma, PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
@@ -19,10 +20,50 @@ const addRoles = async () => {
   }
 };
 
+const addUser = async (email: string, password: string, role: string) => {
+  const hashedPassword = await hashPassword(password);
+
+  await prisma.user.create({
+    data: {
+      email: email,
+      password: hashedPassword,
+      roles: {
+        connect: {
+          name: role,
+        },
+      },
+    },
+  });
+};
+
+const addDomainAdminUser = async () => {
+  if (!process.env.ADMIN_EMAIL) throw new Error('Missing ADMIN_EMAIL env var');
+  if (!process.env.ADMIN_PASSWORD) throw new Error('Missing ADMIN_PASSWORD env var');
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  await addUser(email, password, 'admin');
+};
+
+const addTokenDefaults = async () => {
+  await prisma.tokenSettings.create({
+    data: {
+      tokenType: 'access_token',
+      expiresIn: '30m',
+    },
+  });
+
+  await prisma.tokenSettings.create({
+    data: {
+      tokenType: 'refresh_token',
+      expiresIn: '7d',
+    },
+  });
+};
+
 const addTestUsers = async () => {
   if (process.env.NODE_ENV === 'production') return;
   const savedUsers = await prisma.user.findMany();
-  if (savedUsers.length > 0) return;
+  if (savedUsers.length > 1) return;
   const users: Prisma.UserCreateInput[] = [
     {
       email: 'test_user@mail.com',
@@ -33,29 +74,21 @@ const addTestUsers = async () => {
       password: 'password',
     },
     {
-      email: 'admin@mail.com',
+      email: 'third@mail.com',
       password: 'password',
     },
   ];
 
   for (const user of users) {
-    await prisma.user.create({
-      data: {
-        ...user,
-        roles: {
-          connect: {
-            name: user.email === 'admin@mail.com' ? 'admin' : 'user',
-          },
-        },
-      },
-    });
+    await addUser(user.email, user.password, 'user');
   }
 };
 
 const load = async () => {
   try {
     await addRoles();
-    // TODO: add initial admin user (from env vars)
+    await addDomainAdminUser();
+    await addTokenDefaults();
     await addTestUsers();
   } catch (e) {
     console.error(e);
