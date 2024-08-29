@@ -38,7 +38,7 @@ export const UserDeleteDialog: FC<UserDeleteDialogProps> = ({ id }) => {
       setIsOpen(false);
       redirect('/users');
     }
-  });
+  }, [isSuccess]);
 
   return (
     <AlertDialog open={isOpen}>
