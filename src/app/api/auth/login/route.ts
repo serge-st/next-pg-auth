@@ -13,7 +13,7 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
-async function getUserByEmail(email: string) {
+export async function getUserByEmail(email: string) {
   return await prisma.user.findUnique({
     include: {
       roles: {
@@ -21,6 +21,7 @@ async function getUserByEmail(email: string) {
           name: true,
         },
       },
+      token: true,
     },
     where: { email },
   });
@@ -30,13 +31,15 @@ async function getTokenSettings() {
   return await prisma.tokenSettings.findMany();
 }
 
-type GenerageTokensResponse = {
+type GenerateTokensResponse = {
   access_token: string;
   refresh_token: string;
   refreshMaxAge: number;
 };
 
-async function generateTokens(userInfo: UserWithRoleAsArray): Promise<GenerageTokensResponse> {
+export async function generateTokens(
+  userInfo: UserWithRoleAsArray,
+): Promise<GenerateTokensResponse> {
   const jwtAccessSecret = process.env.JWT_ACCESS_SECRET;
   const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET;
   if (!jwtAccessSecret || !jwtRefreshSecret)
@@ -67,7 +70,7 @@ async function generateTokens(userInfo: UserWithRoleAsArray): Promise<GenerageTo
   };
 }
 
-async function saveRefreshToken(token: string, userId: number) {
+export async function saveRefreshToken(token: string, userId: number) {
   const tokenHash = sha256(token).toString();
   await prisma.token.upsert({
     where: { userId },
