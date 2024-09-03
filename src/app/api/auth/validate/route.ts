@@ -1,49 +1,15 @@
 import { ApiErrorReponse, ApiResponse } from '@/lib/api';
-import jwt from 'jsonwebtoken';
 import { NextRequest } from 'next/server';
 import { headers, cookies } from 'next/headers';
-import { generateTokens, getUserByEmail, saveRefreshToken } from '../login/route';
 import sha256 from 'crypto-js/sha256';
 import { getUserWithRoleArray } from '@/lib/utils/helpers';
-
-function getTokenSecrets() {
-  const access = process.env.JWT_ACCESS_SECRET;
-  const refresh = process.env.JWT_REFRESH_SECRET;
-
-  if (!access || !refresh) return undefined;
-
-  return { access, refresh };
-}
+import { getUserByEmail } from '../helpers';
+import { generateTokens, getTokenSecrets, saveRefreshToken, validateToken } from '../tokens';
+import { ValidateResponse } from './types';
 
 function isValidSHA256(input: string, hash: string) {
   return sha256(input).toString() === hash;
 }
-
-type TokenValidationStatus = 'expired' | 'error';
-
-type TokenValidationResult =
-  | { status: 'success'; payload: any }
-  | { status: TokenValidationStatus };
-
-function validateToken(token: string, tokenSecret: string): TokenValidationResult {
-  try {
-    return {
-      status: 'success',
-      payload: jwt.verify(token, tokenSecret),
-    };
-  } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
-      return { status: 'expired' };
-    } else {
-      return { status: 'error' };
-    }
-  }
-}
-
-type ValidateResponse = {
-  payload: any;
-  access_token?: string;
-};
 
 export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateResponse>> {
   const tokenSecret = getTokenSecrets();

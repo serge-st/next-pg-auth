@@ -6,9 +6,6 @@ import { userSchema } from '../user-schema';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { hashPassword } from '@/lib/api';
 
-//TODO delete after testing
-const delay = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 async function getUserById(id: string) {
   return await prisma.user.findUnique({
     omit: {
