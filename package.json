@@ -9,7 +9,7 @@
     "lint": "next lint",
     "db:start": "docker run -d --name postgres -p 5432:5432 -v ./postgres-data:/var/lib/postgresql/data --env-file .env --platform linux/amd64 postgres:15-alpine",
     "db:setup": "pnpx prisma db push",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "pnpm tsx env-check.ts && pnpm tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
