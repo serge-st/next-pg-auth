@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/db/prisma';
-import { getUserWithRoleArray, isNumber } from '@/lib/utils/helpers';
-import { ApiErrorReponse, ApiResponse, validateBody } from '@/lib/api';
+import { getUserWithRoleArray } from '@/lib/utils/helpers';
+import { ApiErrorReponse, ApiResponse, extractUserId, validateBody } from '@/lib/api';
 import { userSchema } from '../user-schema';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { hashPassword } from '@/lib/api';
@@ -71,15 +71,6 @@ async function deleteUserById(id: string) {
   await prisma.user.delete({
     where: { id: Number(id) },
   });
-}
-
-function extractUserId(request: NextRequest): string | undefined {
-  const { pathname } = request.nextUrl;
-  const id = pathname.split('/').pop();
-
-  if (!id || !isNumber(id)) return undefined;
-
-  return id;
 }
 
 export async function GET(request: NextRequest) {

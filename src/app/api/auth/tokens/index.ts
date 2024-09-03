@@ -75,3 +75,7 @@ export async function saveRefreshToken(token: string, userId: number) {
     },
   });
 }
+
+export async function deleteRefreshToken(userId: number) {
+  await prisma.token.delete({ where: { userId } });
+}
