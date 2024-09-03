@@ -17,6 +17,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
+import { redirect } from 'next/navigation';
 
 interface LoginFormProps {}
 
@@ -54,9 +55,9 @@ export const LoginForm: FC<LoginFormProps> = () => {
   });
 
   useEffect(() => {
-    if (isSuccess) {
-      form.reset();
-    }
+    if (!isSuccess) return;
+    form.reset();
+    redirect(`/users`);
   }, [form, isSuccess]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
