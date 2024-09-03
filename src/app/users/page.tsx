@@ -1,10 +1,16 @@
+'use client';
+
 import { AddUserForm } from '@/components/add-user-form';
 import { apiClient } from '@/lib/api';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { UsersTable } from '@/components/users-table';
+import { UserWithRoleAsArray } from '@/lib/types';
+import { useQueries } from '@tanstack/react-query';
+import LoadingPage from './loading';
+import { createContext } from 'react';
 
 const fetchUsers = async () => {
-  const result = await apiClient.get('/users');
+  const result = await apiClient.get<UserWithRoleAsArray[]>('/users');
   return result.data;
 };
 
@@ -15,12 +21,32 @@ const fetchRoles = async () => {
   return result.data;
 };
 
-export default async function UsersPage() {
-  const availableRoles = await fetchRoles();
-  const users = await fetchUsers();
+export const UsersPageContext = createContext({ refetchUsers: () => {} });
+
+export default function UsersPage() {
+  const [usersQuery, rolesQuery] = useQueries({
+    queries: [
+      {
+        queryKey: ['userData'],
+        queryFn: fetchUsers,
+        retry: 1,
+      },
+      {
+        queryKey: ['roles'],
+        queryFn: fetchRoles,
+        retry: 1,
+      },
+    ],
+  });
+
+  if (usersQuery.error || rolesQuery.error) {
+    throw usersQuery.error || rolesQuery.error;
+  }
+
+  if (usersQuery.isPaused || rolesQuery.isPending) return <LoadingPage />;
 
   return (
-    <>
+    <UsersPageContext.Provider value={{ refetchUsers: usersQuery.refetch }}>
       <h1 className="w-full text-center text-2xl">User Management</h1>
       <Tabs defaultValue="list" className="flex w-full flex-col items-center gap-4">
         <TabsList className="grid w-[400px] grid-cols-2">
@@ -28,12 +54,12 @@ export default async function UsersPage() {
           <TabsTrigger value="form">Add User</TabsTrigger>
         </TabsList>
         <TabsContent value="list">
-          <UsersTable users={users}></UsersTable>
+          {usersQuery.isSuccess && <UsersTable users={usersQuery.data}></UsersTable>}
         </TabsContent>
         <TabsContent value="form">
-          <AddUserForm availableRoles={availableRoles}></AddUserForm>
+          {rolesQuery.isSuccess && <AddUserForm availableRoles={rolesQuery.data}></AddUserForm>}
         </TabsContent>
       </Tabs>
-    </>
+    </UsersPageContext.Provider>
   );
 }

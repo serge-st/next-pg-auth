@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useEffect } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -27,12 +27,14 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
+import { UsersPageContext } from '@/app/users/page';
 
 interface AddUserFormProps {
   availableRoles: string[];
 }
 
 export const AddUserForm: FC<AddUserFormProps> = ({ availableRoles }) => {
+  const { refetchUsers } = useContext(UsersPageContext);
   const { toast } = useToast();
   const formSchema = z.object({
     email: z.string().email(),
@@ -76,8 +78,9 @@ export const AddUserForm: FC<AddUserFormProps> = ({ availableRoles }) => {
         title: `User ${email} was created`,
       });
       form.reset();
+      refetchUsers();
     }
-  }, [form, isSuccess, toast]);
+  }, [form, isSuccess, toast, refetchUsers]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     mutate(values);
