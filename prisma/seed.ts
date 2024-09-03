@@ -1,3 +1,4 @@
+import { REFRESH_TOKEN } from '@/app/api/auth/constants';
 import { hashPassword } from '../src/lib/api';
 import { ROLES } from './data';
 import { Prisma, PrismaClient } from '@prisma/client';
@@ -54,7 +55,7 @@ const addTokenDefaults = async () => {
 
   await prisma.tokenSettings.create({
     data: {
-      tokenType: 'refresh_token',
+      tokenType: REFRESH_TOKEN,
       expiresIn: '7d',
     },
   });

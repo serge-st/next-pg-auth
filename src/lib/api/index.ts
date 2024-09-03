@@ -4,3 +4,4 @@ export { ApiResponse } from './api-response';
 export { isApiError } from './is-api-error';
 export { isApiRequest, validateBody } from './helpers';
 export { comparePassword, hashPassword } from './password-utils';
+export { isValidSHA256 } from './is-valid-sha256';

@@ -5,6 +5,7 @@ import { ApiErrorReponse } from '@/lib/api';
 import jwt from 'jsonwebtoken';
 import ms from 'ms';
 import sha256 from 'crypto-js/sha256';
+import { REFRESH_TOKEN } from '../constants';
 
 export async function getTokenSettings() {
   return await prisma.tokenSettings.findMany();
@@ -42,7 +43,7 @@ export async function generateTokens(
 
   const tokenSettings = await getTokenSettings();
   const atExpiration = tokenSettings.find((ts) => ts.tokenType === 'access_token')?.expiresIn;
-  const rtExpiration = tokenSettings.find((ts) => ts.tokenType === 'refresh_token')?.expiresIn;
+  const rtExpiration = tokenSettings.find((ts) => ts.tokenType === REFRESH_TOKEN)?.expiresIn;
 
   if (!atExpiration || !rtExpiration)
     throw new ApiErrorReponse('Missing configuration in the DB', 500);

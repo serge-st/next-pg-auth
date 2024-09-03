@@ -1,15 +1,11 @@
-import { ApiErrorReponse, ApiResponse } from '@/lib/api';
+import { ApiErrorReponse, ApiResponse, isValidSHA256 } from '@/lib/api';
 import { NextRequest } from 'next/server';
 import { headers, cookies } from 'next/headers';
-import sha256 from 'crypto-js/sha256';
 import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { getUserByEmail } from '../helpers';
 import { generateTokens, getTokenSecrets, saveRefreshToken, validateToken } from '../tokens';
 import { ValidateResponse } from './types';
-
-function isValidSHA256(input: string, hash: string) {
-  return sha256(input).toString() === hash;
-}
+import { REFRESH_TOKEN } from '../constants';
 
 export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateResponse>> {
   const tokenSecret = getTokenSecrets();
@@ -33,7 +29,7 @@ export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateR
 
     // If access token is expired, check refresh token
     const httpOnlyCookies = cookies();
-    const refreshToken = httpOnlyCookies.get('refresh_token')?.value;
+    const refreshToken = httpOnlyCookies.get(REFRESH_TOKEN)?.value;
     if (!refreshToken) return new ApiErrorReponse('Please login', 401);
 
     const refreshValidationResult = validateToken(refreshToken, tokenSecret.refresh);
@@ -66,7 +62,7 @@ export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateR
     );
     response.headers.append(
       'Set-Cookie',
-      `refresh_token=${refresh_token}; HttpOnly; Path=/; Max-Age=${refreshMaxAge}; Secure; SameSite=Strict`,
+      `${REFRESH_TOKEN}=${refresh_token}; HttpOnly; Path=/; Max-Age=${refreshMaxAge}; Secure; SameSite=Strict`,
     );
 
     return response;
