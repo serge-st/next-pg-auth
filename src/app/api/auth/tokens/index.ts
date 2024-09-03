@@ -5,7 +5,7 @@ import { ApiErrorReponse } from '@/lib/api';
 import jwt from 'jsonwebtoken';
 import ms from 'ms';
 import sha256 from 'crypto-js/sha256';
-import { REFRESH_TOKEN } from '../constants';
+import { REFRESH_TOKEN } from '@/lib/constants';
 
 export async function getTokenSettings() {
   return await prisma.tokenSettings.findMany();

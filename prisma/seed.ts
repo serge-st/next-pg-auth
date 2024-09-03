@@ -1,4 +1,4 @@
-import { REFRESH_TOKEN } from '@/app/api/auth/constants';
+import { REFRESH_TOKEN } from '@/lib/constants';
 import { hashPassword } from '../src/lib/api';
 import { ROLES } from './data';
 import { Prisma, PrismaClient } from '@prisma/client';

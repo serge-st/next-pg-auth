@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { generateTokens, saveRefreshToken } from '../tokens';
 import { getUserByEmail } from '../helpers';
-import { REFRESH_TOKEN } from '../constants';
+import { REFRESH_TOKEN } from '@/lib/constants';
 
 const loginSchema = z.object({
   email: z.string().email(),

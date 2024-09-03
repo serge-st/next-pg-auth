@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { redirect } from 'next/navigation';
+import { localStorageAccessToken } from '@/lib/utils/helpers';
 
 interface LoginFormProps {}
 
@@ -28,9 +29,9 @@ export const LoginForm: FC<LoginFormProps> = () => {
     formError: z.string().optional(),
   });
 
-  const { mutate, isPending, isSuccess } = useMutation({
+  const { mutate, isPending, isSuccess, data } = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => {
-      return apiClient.post('/auth/login', values);
+      return apiClient.post('/auth/login', values).then((res) => res.data);
     },
     onError: (error) => {
       const isCritical = isApiError(error) && error.response.status === 500;
@@ -57,8 +58,9 @@ export const LoginForm: FC<LoginFormProps> = () => {
   useEffect(() => {
     if (!isSuccess) return;
     form.reset();
+    localStorageAccessToken.set(data.access_token);
     redirect(`/users`);
-  }, [form, isSuccess]);
+  }, [form, isSuccess, data]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     mutate(values);

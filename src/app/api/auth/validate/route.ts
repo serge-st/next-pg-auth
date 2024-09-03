@@ -5,7 +5,7 @@ import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { getUserByEmail } from '../helpers';
 import { generateTokens, getTokenSecrets, saveRefreshToken, validateToken } from '../tokens';
 import { ValidateResponse } from './types';
-import { REFRESH_TOKEN } from '../constants';
+import { REFRESH_TOKEN } from '@/lib/constants';
 
 export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateResponse>> {
   const tokenSecret = getTokenSecrets();

@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
-import { REFRESH_TOKEN } from '../constants';
+import { REFRESH_TOKEN } from '@/lib/constants';
 import { ApiErrorReponse, ApiResponse } from '@/lib/api';
 import { deleteRefreshToken, getTokenSecrets, validateToken } from '../tokens';
 import { getUserByEmail } from '../helpers';

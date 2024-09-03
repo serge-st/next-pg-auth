@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { localStorageAccessToken } from '@/lib/utils/helpers';
 
 export const LogoutButton: FC = () => {
   const router = useRouter();
@@ -16,7 +17,7 @@ export const LogoutButton: FC = () => {
   const handleLogout = () => {
     console.log('logout');
     // mutate();
-    // delete access token
+    localStorageAccessToken.remove();
     router.push('/');
   };
   return (
