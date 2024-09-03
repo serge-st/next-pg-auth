@@ -11,10 +11,8 @@ export async function getTokenSettings() {
 }
 
 export function getTokenSecrets() {
-  const access = process.env.JWT_ACCESS_SECRET;
-  const refresh = process.env.JWT_REFRESH_SECRET;
-
-  if (!access || !refresh) return undefined;
+  const access = process.env.JWT_ACCESS_SECRET!;
+  const refresh = process.env.JWT_REFRESH_SECRET!;
 
   return { access, refresh };
 }
@@ -37,10 +35,7 @@ export function validateToken(token: string, tokenSecret: string): TokenValidati
 export async function generateTokens(
   userInfo: UserWithRoleAsArray,
 ): Promise<GenerateTokensResponse> {
-  const jwtAccessSecret = process.env.JWT_ACCESS_SECRET;
-  const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET;
-  if (!jwtAccessSecret || !jwtRefreshSecret)
-    throw new ApiErrorReponse('Missing configuration', 500);
+  const { access: jwtAccessSecret, refresh: jwtRefreshSecret } = getTokenSecrets();
 
   const { email, roles } = userInfo;
   const payload = { sub: email, roles };
@@ -49,7 +44,8 @@ export async function generateTokens(
   const atExpiration = tokenSettings.find((ts) => ts.tokenType === 'access_token')?.expiresIn;
   const rtExpiration = tokenSettings.find((ts) => ts.tokenType === 'refresh_token')?.expiresIn;
 
-  if (!atExpiration || !rtExpiration) throw new ApiErrorReponse('Missing configuration', 500);
+  if (!atExpiration || !rtExpiration)
+    throw new ApiErrorReponse('Missing configuration in the DB', 500);
 
   const access_token = jwt.sign(payload, jwtAccessSecret, {
     expiresIn: atExpiration,

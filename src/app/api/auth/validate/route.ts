@@ -13,7 +13,6 @@ function isValidSHA256(input: string, hash: string) {
 
 export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateResponse>> {
   const tokenSecret = getTokenSecrets();
-  if (!tokenSecret) return new ApiErrorReponse('Missing configuration', 500);
 
   const headersList = headers();
   const bearerHeader = headersList.get('Authorization');
