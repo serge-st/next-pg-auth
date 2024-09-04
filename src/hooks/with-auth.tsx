@@ -33,7 +33,10 @@ export function withAuth<P extends object>(WrappedComponent: React.ComponentType
 
     useEffect(() => {
       if (isSuccess) {
+        const newToken = data.access_token;
+        if (newToken) localStorageAccessToken.set(newToken);
         const [role] = data.payload?.roles;
+
         if (!role) redirect('/');
         const allowedRoutes = APP_ROUTES[role as Roles];
 

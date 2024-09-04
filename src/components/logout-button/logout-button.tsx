@@ -9,14 +9,14 @@ import { localStorageAccessToken } from '@/lib/utils/helpers';
 
 export const LogoutButton: FC = () => {
   const router = useRouter();
-  const { mutate, isSuccess } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: () => {
       return apiClient.post('/auth/logout', {});
     },
   });
   const handleLogout = () => {
     console.log('logout');
-    // mutate();
+    mutate();
     localStorageAccessToken.remove();
     router.push('/');
   };
