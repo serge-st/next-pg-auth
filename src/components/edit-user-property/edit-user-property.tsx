@@ -17,11 +17,11 @@ import { Icons } from '@/components/ui/icons';
 import { userSchema } from '@/app/api/users/user-schema';
 import { z } from 'zod';
 import { capitalizeFirstLetter, cn } from '@/lib/utils/helpers';
-import { UserPageContext } from '@/app/users/[id]/page';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiClient, isApiError } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import { UserRoleSelect } from '../user-role-select';
+import { UserPageContext } from '@/app/users/[id]/page-context';
 
 interface EditUserPropertyProps {
   children: ReactNode;

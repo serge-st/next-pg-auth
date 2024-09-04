@@ -2,7 +2,6 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { PageLoading } from '@/components/page-loading';
-import { createContext } from 'react';
 import { apiClient } from '@/lib/api';
 import { UserWithRoleAsArray } from '@/lib/types';
 import { NextPage } from 'next';
@@ -10,8 +9,7 @@ import { UserEditMenu } from '@/components/user-edit-menu';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { withAuth } from '@/hooks';
-
-export const UserPageContext = createContext({ refetch: () => {} });
+import { UserPageContext } from './page-context';
 
 interface UserPageProps {
   params: {

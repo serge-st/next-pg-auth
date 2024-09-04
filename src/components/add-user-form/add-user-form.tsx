@@ -27,7 +27,7 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { UsersPageContext } from '@/app/users/page';
+import { UsersPageContext } from '@/app/users/page-context';
 
 interface AddUserFormProps {
   availableRoles: string[];

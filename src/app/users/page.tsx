@@ -7,8 +7,8 @@ import { UsersTable } from '@/components/users-table';
 import { UserWithRoleAsArray } from '@/lib/types';
 import { useQueries } from '@tanstack/react-query';
 import { PageLoading } from '@/components/page-loading';
-import { createContext } from 'react';
 import { withAuth } from '@/hooks';
+import { UsersPageContext } from './page-context';
 
 const fetchUsers = async () => {
   const result = await apiClient.get<UserWithRoleAsArray[]>('/users');
@@ -21,8 +21,6 @@ const fetchRoles = async () => {
   });
   return result.data;
 };
-
-export const UsersPageContext = createContext({ refetchUsers: () => {} });
 
 function UsersPage() {
   const [usersQuery, rolesQuery] = useQueries({

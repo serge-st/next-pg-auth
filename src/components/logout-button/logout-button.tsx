@@ -15,7 +15,6 @@ export const LogoutButton: FC = () => {
     },
   });
   const handleLogout = () => {
-    console.log('logout');
     mutate();
     localStorageAccessToken.remove();
     router.push('/');
