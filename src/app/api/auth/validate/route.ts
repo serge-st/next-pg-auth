@@ -5,9 +5,10 @@ import { headers, cookies } from 'next/headers';
 import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { getUserByEmail } from '../helpers';
 import { generateTokens, getTokenSecrets, saveRefreshToken, validateToken } from '../tokens';
-import { ValidateResponse } from './types';
+
 import { REFRESH_TOKEN } from '@/lib/constants';
 import { getHTTPCookieOptions } from '@/lib/api/helpers';
+import { ValidateResponse } from '@/lib/types';
 
 export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateResponse>> {
   const tokenSecret = getTokenSecrets();

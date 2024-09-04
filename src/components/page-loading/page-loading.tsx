@@ -1,0 +1,12 @@
+import { FC } from 'react';
+import { Icons } from '@/components/ui/icons';
+
+export const PageLoading: FC = () => {
+  return (
+    <div className="flex flex-grow items-center justify-center">
+      <div className="h-12 w-12">
+        <Icons.spinner className="h-full w-full animate-spin" />
+      </div>
+    </div>
+  );
+};

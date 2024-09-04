@@ -6,3 +6,4 @@ export { isApiRequest, validateBody } from './helpers';
 export { comparePassword, hashPassword } from './password-utils';
 export { isValidSHA256 } from './is-valid-sha256';
 export { extractUserId } from './extract-user-id';
+export { isRouteAllowed } from './is-route-allowed';

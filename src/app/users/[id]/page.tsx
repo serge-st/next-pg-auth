@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import LoadingPage from '../loading';
+import { PageLoading } from '@/components/page-loading';
 import { createContext } from 'react';
 import { apiClient } from '@/lib/api';
 import { UserWithRoleAsArray } from '@/lib/types';
@@ -9,6 +9,7 @@ import { NextPage } from 'next';
 import { UserEditMenu } from '@/components/user-edit-menu';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { withAuth } from '@/hooks';
 
 export const UserPageContext = createContext({ refetch: () => {} });
 
@@ -27,7 +28,7 @@ const UserPage: NextPage<UserPageProps> = ({ params: { id } }) => {
 
   if (error) throw error;
 
-  if (isPending) return <LoadingPage />;
+  if (isPending) return <PageLoading />;
 
   return (
     <UserPageContext.Provider value={{ refetch }}>
@@ -40,4 +41,4 @@ const UserPage: NextPage<UserPageProps> = ({ params: { id } }) => {
   );
 };
 
-export default UserPage;
+export default withAuth(UserPage);

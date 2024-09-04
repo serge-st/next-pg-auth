@@ -6,8 +6,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { UsersTable } from '@/components/users-table';
 import { UserWithRoleAsArray } from '@/lib/types';
 import { useQueries } from '@tanstack/react-query';
-import LoadingPage from './loading';
+import { PageLoading } from '@/components/page-loading';
 import { createContext } from 'react';
+import { withAuth } from '@/hooks';
 
 const fetchUsers = async () => {
   const result = await apiClient.get<UserWithRoleAsArray[]>('/users');
@@ -23,7 +24,7 @@ const fetchRoles = async () => {
 
 export const UsersPageContext = createContext({ refetchUsers: () => {} });
 
-export default function UsersPage() {
+function UsersPage() {
   const [usersQuery, rolesQuery] = useQueries({
     queries: [
       {
@@ -43,7 +44,7 @@ export default function UsersPage() {
     throw usersQuery.error || rolesQuery.error;
   }
 
-  if (usersQuery.isPaused || rolesQuery.isPending) return <LoadingPage />;
+  if (usersQuery.isPaused || rolesQuery.isPending) return <PageLoading />;
 
   return (
     <UsersPageContext.Provider value={{ refetchUsers: usersQuery.refetch }}>
@@ -63,3 +64,5 @@ export default function UsersPage() {
     </UsersPageContext.Provider>
   );
 }
+
+export default withAuth(UsersPage);
