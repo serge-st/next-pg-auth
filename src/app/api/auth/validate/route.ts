@@ -1,3 +1,4 @@
+import 'server-only';
 import { ApiErrorReponse, ApiResponse, isValidSHA256 } from '@/lib/api';
 import { NextRequest } from 'next/server';
 import { headers, cookies } from 'next/headers';
@@ -6,6 +7,7 @@ import { getUserByEmail } from '../helpers';
 import { generateTokens, getTokenSecrets, saveRefreshToken, validateToken } from '../tokens';
 import { ValidateResponse } from './types';
 import { REFRESH_TOKEN } from '@/lib/constants';
+import { getHTTPCookieOptions } from '@/lib/api/helpers';
 
 export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateResponse>> {
   const tokenSecret = getTokenSecrets();
@@ -56,16 +58,9 @@ export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateR
     );
     await saveRefreshToken(refresh_token, user.id);
 
-    const response = new ApiResponse(
-      { payload: refreshValidationResult.payload, access_token },
-      200,
-    );
-    response.headers.append(
-      'Set-Cookie',
-      `${REFRESH_TOKEN}=${refresh_token}; HttpOnly; Path=/; Max-Age=${refreshMaxAge}; Secure; SameSite=Strict`,
-    );
+    httpOnlyCookies.set(REFRESH_TOKEN, refresh_token, getHTTPCookieOptions(refreshMaxAge));
 
-    return response;
+    return new ApiResponse({ payload: refreshValidationResult.payload, access_token }, 200);
   } catch (error) {
     console.log(error);
     return new ApiErrorReponse('Unexpected error', 500);

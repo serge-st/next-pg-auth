@@ -1,3 +1,4 @@
+import 'server-only';
 import { ApiErrorReponse, ApiResponse, comparePassword, validateBody } from '@/lib/api';
 import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { NextRequest } from 'next/server';
@@ -5,6 +6,8 @@ import { z } from 'zod';
 import { generateTokens, saveRefreshToken } from '../tokens';
 import { getUserByEmail } from '../helpers';
 import { REFRESH_TOKEN } from '@/lib/constants';
+import { cookies } from 'next/headers';
+import { getHTTPCookieOptions } from '@/lib/api/helpers';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -32,13 +35,9 @@ export async function POST(request: NextRequest) {
     );
     await saveRefreshToken(refresh_token, user.id);
 
-    const response = new ApiResponse({ access_token }, 200);
-    response.headers.append(
-      'Set-Cookie',
-      `${REFRESH_TOKEN}=${refresh_token}; HttpOnly; Path=/; Max-Age=${refreshMaxAge}; Secure; SameSite=Strict`,
-    );
+    cookies().set(REFRESH_TOKEN, refresh_token, getHTTPCookieOptions(refreshMaxAge));
 
-    return response;
+    return new ApiResponse({ access_token }, 200);
   } catch (error) {
     console.error(error);
     return new ApiErrorReponse('An error occurred', 500);

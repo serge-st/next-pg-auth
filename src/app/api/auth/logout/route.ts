@@ -1,3 +1,4 @@
+import 'server-only';
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 import { REFRESH_TOKEN } from '@/lib/constants';
@@ -24,13 +25,7 @@ export async function POST(_request: NextRequest) {
 
     httpOnlyCookies.delete(REFRESH_TOKEN);
 
-    const response = new ApiResponse({ message: 'Logged out' }, 200);
-    response.headers.append(
-      'Set-Cookie',
-      `${REFRESH_TOKEN}=; HttpOnly; Path=/; Max-Age=0; Secure; SameSite=Strict`,
-    );
-
-    return response;
+    return new ApiResponse({ message: 'Logged out' }, 200);
   } catch (error) {
     console.error(error);
     return new ApiErrorReponse('Unexpected error', 500);
