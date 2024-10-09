@@ -1,7 +1,7 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { HOST, localStorageAccessToken } from '@/lib/utils/helpers';
 import { isApiError } from './is-api-error';
-import { ValidateResponse } from '../types';
+import { AxiosRequestConfigWithRetry, ValidateResponse } from '../types';
 
 export const apiClient = axios.create({
   baseURL: `${HOST}/api`,
@@ -21,11 +21,17 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest: AxiosRequestConfig = error.config;
+    const originalRequest: AxiosRequestConfigWithRetry = error.config;
 
     if (!isApiError(error)) return Promise.reject(error);
     if (error.response.status !== 401) return Promise.reject(error);
     if (originalRequest.url?.includes('/auth/validate')) return Promise.reject(error);
+
+    if (originalRequest._retry && originalRequest._retry > 3) {
+      return Promise.reject(error);
+    }
+
+    originalRequest._retry = (originalRequest._retry || 0) + 1;
 
     try {
       const response = await apiClient.post<ValidateResponse>(
