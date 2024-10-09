@@ -61,36 +61,11 @@ const addTokenDefaults = async () => {
   });
 };
 
-const addTestUsers = async () => {
-  if (process.env.NODE_ENV === 'production') return;
-  const savedUsers = await prisma.user.findMany();
-  if (savedUsers.length > 1) return;
-  const users: Prisma.UserCreateInput[] = [
-    {
-      email: 'test_user@mail.com',
-      password: 'password',
-    },
-    {
-      email: '2nd_u@mail.com',
-      password: 'password',
-    },
-    {
-      email: 'third@mail.com',
-      password: 'password',
-    },
-  ];
-
-  for (const user of users) {
-    await addUser(user.email, user.password, 'user');
-  }
-};
-
 const load = async () => {
   try {
     await addRoles();
     await addDomainAdminUser();
     await addTokenDefaults();
-    await addTestUsers();
   } catch (e) {
     console.error(e);
     process.exit(1);
