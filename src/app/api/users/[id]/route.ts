@@ -68,8 +68,11 @@ async function updateUserById(id: string, body: Record<string, unknown>) {
 }
 
 async function deleteUserById(id: string) {
+  const numberId = Number(id);
+
+  await prisma.token.deleteMany({ where: { userId: numberId } });
   await prisma.user.delete({
-    where: { id: Number(id) },
+    where: { id: numberId },
   });
 }
 
