@@ -49,7 +49,7 @@ const addTokenDefaults = async () => {
   await prisma.tokenSettings.create({
     data: {
       tokenType: 'access_token',
-      expiresIn: '30m',
+      expiresIn: '1h',
     },
   });
 
