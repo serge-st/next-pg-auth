@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "pnpm tsx env-check.ts && next dev",
     "build": "pnpm tsx env-check.ts && next build",
+    "build2": "next build",
     "start": "pnpm tsx env-check.ts && next start",
     "lint": "next lint",
     "db:start": "docker run -d --name postgres -p 5432:5432 -v ./postgres-data:/var/lib/postgresql/data --env-file .env --platform linux/amd64 postgres:15-alpine",

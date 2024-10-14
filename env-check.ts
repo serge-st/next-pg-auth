@@ -9,6 +9,8 @@ function parseEnvExample(): string[] {
 }
 
 function checkEnvVariables(requiredVars: string[]): boolean {
+  console.log(requiredVars);
+  console.log(process.env);
   const missingVars = requiredVars.filter((varName) => !process.env[varName]);
 
   if (missingVars.length > 0) {
