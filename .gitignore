@@ -38,3 +38,6 @@ next-env.d.ts
 
 # db volume
 postgres-data
+
+# password file genereted after seeding
+password.txt
