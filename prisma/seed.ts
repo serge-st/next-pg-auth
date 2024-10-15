@@ -2,6 +2,9 @@ import { REFRESH_TOKEN, ACCESS_TOKEN } from '@/lib/constants';
 import { hashPassword } from '../src/lib/api';
 import { ROLES } from './data';
 import { Prisma, PrismaClient } from '@prisma/client';
+import { generatePassword } from './generatePassword';
+import fs from 'fs';
+import path from 'path';
 const prisma = new PrismaClient();
 
 const addRoles = async () => {
@@ -39,9 +42,10 @@ const addUser = async (email: string, password: string, role: string) => {
 
 const addDomainAdminUser = async () => {
   if (!process.env.ADMIN_EMAIL) throw new Error('Missing ADMIN_EMAIL env var');
-  if (!process.env.ADMIN_PASSWORD) throw new Error('Missing ADMIN_PASSWORD env var');
   const email = process.env.ADMIN_EMAIL;
-  const password = process.env.ADMIN_PASSWORD;
+  const password = generatePassword(16);
+  const passwordPath = path.join(__dirname, '..', 'password.txt');
+  fs.writeFileSync(passwordPath, password);
   await addUser(email, password, 'admin');
 };
 
@@ -50,6 +54,7 @@ const addTokenDefaults = async () => {
     data: {
       tokenType: ACCESS_TOKEN,
       expiresIn: '1h',
+      secret: generatePassword(32),
     },
   });
 
@@ -57,6 +62,7 @@ const addTokenDefaults = async () => {
     data: {
       tokenType: REFRESH_TOKEN,
       expiresIn: '7d',
+      secret: generatePassword(32),
     },
   });
 };

@@ -8,14 +8,13 @@ import sha256 from 'crypto-js/sha256';
 import { REFRESH_TOKEN, ACCESS_TOKEN } from '@/lib/constants';
 
 export async function getTokenSettings() {
-  return await prisma.tokenSettings.findMany();
-}
+  const result = await prisma.tokenSettings.findMany();
+  const atSettings = result.find((ts) => ts.tokenType === ACCESS_TOKEN);
+  const rtSettings = result.find((ts) => ts.tokenType === REFRESH_TOKEN);
 
-export function getTokenSecrets() {
-  const access = process.env.JWT_ACCESS_SECRET!;
-  const refresh = process.env.JWT_REFRESH_SECRET!;
+  if (!atSettings || !rtSettings) throw new ApiErrorReponse('Missing configuration in the DB', 500);
 
-  return { access, refresh };
+  return { access: atSettings, refresh: rtSettings };
 }
 
 export function validateToken(token: string, tokenSecret: string): TokenValidationResult {
@@ -36,26 +35,19 @@ export function validateToken(token: string, tokenSecret: string): TokenValidati
 export async function generateTokens(
   userInfo: UserWithRoleAsArray,
 ): Promise<GenerateTokensResponse> {
-  const { access: jwtAccessSecret, refresh: jwtRefreshSecret } = getTokenSecrets();
-
   const { email, roles } = userInfo;
   const payload = { sub: email, roles };
 
   const tokenSettings = await getTokenSettings();
-  const atExpiration = tokenSettings.find((ts) => ts.tokenType === ACCESS_TOKEN)?.expiresIn;
-  const rtExpiration = tokenSettings.find((ts) => ts.tokenType === REFRESH_TOKEN)?.expiresIn;
 
-  if (!atExpiration || !rtExpiration)
-    throw new ApiErrorReponse('Missing configuration in the DB', 500);
-
-  const access_token = jwt.sign(payload, jwtAccessSecret, {
-    expiresIn: atExpiration,
+  const access_token = jwt.sign(payload, tokenSettings.access.secret, {
+    expiresIn: tokenSettings.access.expiresIn,
   });
-  const refresh_token = jwt.sign(payload, jwtRefreshSecret, {
-    expiresIn: rtExpiration,
+  const refresh_token = jwt.sign(payload, tokenSettings.refresh.secret, {
+    expiresIn: tokenSettings.refresh.expiresIn,
   });
 
-  const refreshMaxAge = Math.floor(ms(rtExpiration) / 1000);
+  const refreshMaxAge = Math.floor(ms(tokenSettings.refresh.expiresIn) / 1000);
 
   return {
     access_token,

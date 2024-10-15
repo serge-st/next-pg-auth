@@ -4,14 +4,13 @@ import { NextRequest } from 'next/server';
 import { headers, cookies } from 'next/headers';
 import { getUserWithRoleArray } from '@/lib/utils/helpers';
 import { getUserByEmail } from '../helpers';
-import { generateTokens, getTokenSecrets, saveRefreshToken, validateToken } from '../tokens';
-
+import { generateTokens, getTokenSettings, saveRefreshToken, validateToken } from '../tokens';
 import { REFRESH_TOKEN } from '@/lib/constants';
 import { getHTTPCookieOptions } from '@/lib/api/helpers';
 import { ValidateResponse } from '@/lib/types';
 
 export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateResponse>> {
-  const tokenSecret = getTokenSecrets();
+  const tokenSettings = await getTokenSettings();
 
   const headersList = headers();
   const bearerHeader = headersList.get('Authorization');
@@ -22,7 +21,7 @@ export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateR
 
   try {
     // Check access token
-    const accessValidationResult = validateToken(accessToken, tokenSecret.access);
+    const accessValidationResult = validateToken(accessToken, tokenSettings.access.secret);
 
     if (accessValidationResult.status === 'error')
       return new ApiErrorReponse('Please check you login credentials', 401);
@@ -35,7 +34,7 @@ export async function POST(_request: NextRequest): Promise<ApiResponse<ValidateR
     const refreshToken = httpOnlyCookies.get(REFRESH_TOKEN)?.value;
     if (!refreshToken) return new ApiErrorReponse('Please login', 401);
 
-    const refreshValidationResult = validateToken(refreshToken, tokenSecret.refresh);
+    const refreshValidationResult = validateToken(refreshToken, tokenSettings.refresh.secret);
 
     if (refreshValidationResult.status === 'error')
       return new ApiErrorReponse('Please check you login credentials', 401);

@@ -34,6 +34,7 @@ model TokenSettings {
   id        Int    @id @default(autoincrement())
   tokenType String @unique
   expiresIn String // vercel/ms
+  secret    String
 }
 
 model Token {
