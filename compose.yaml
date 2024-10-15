@@ -25,6 +25,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: next-pg-auth
+    hostname: authhost
     networks:
       - authnetwork
     platform: linux/amd64
