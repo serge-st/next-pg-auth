@@ -1,4 +1,4 @@
-import { REFRESH_TOKEN } from '@/lib/constants';
+import { REFRESH_TOKEN, ACCESS_TOKEN } from '@/lib/constants';
 import { hashPassword } from '../src/lib/api';
 import { ROLES } from './data';
 import { Prisma, PrismaClient } from '@prisma/client';
@@ -48,7 +48,7 @@ const addDomainAdminUser = async () => {
 const addTokenDefaults = async () => {
   await prisma.tokenSettings.create({
     data: {
-      tokenType: 'access_token',
+      tokenType: ACCESS_TOKEN,
       expiresIn: '1h',
     },
   });
