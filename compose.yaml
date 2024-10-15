@@ -41,6 +41,7 @@ services:
         condition: service_healthy
     volumes:
       - /app/node_modules
+      - ./app-setup:/app/app-setup
 networks:
   authnetwork:
     driver: bridge

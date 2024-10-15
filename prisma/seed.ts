@@ -42,29 +42,50 @@ const addUser = async (email: string, password: string, role: string) => {
 
 const addDomainAdminUser = async () => {
   if (!process.env.ADMIN_EMAIL) throw new Error('Missing ADMIN_EMAIL env var');
-  const email = process.env.ADMIN_EMAIL;
-  const password = generatePassword(16);
-  const passwordPath = path.join(__dirname, '..', 'password.txt');
-  fs.writeFileSync(passwordPath, password);
-  await addUser(email, password, 'admin');
+
+  try {
+    const email = process.env.ADMIN_EMAIL;
+    const password = generatePassword(16);
+    await addUser(email, password, 'admin');
+    const text = `# Admin User Credentials:\n${email}\n${password}`;
+    fs.writeFileSync(path.join(__dirname, '..', 'app-setup', 'password.txt'), text);
+  } catch (e) {
+    if (!(e instanceof Prisma.PrismaClientKnownRequestError)) throw e;
+    if (e.code === 'P2002') {
+      console.log('Admin user already exists');
+      return;
+    } else {
+      throw e;
+    }
+  }
 };
 
 const addTokenDefaults = async () => {
-  await prisma.tokenSettings.create({
-    data: {
-      tokenType: ACCESS_TOKEN,
-      expiresIn: '1h',
-      secret: generatePassword(32),
-    },
-  });
+  try {
+    await prisma.tokenSettings.create({
+      data: {
+        tokenType: ACCESS_TOKEN,
+        expiresIn: '1h',
+        secret: generatePassword(32),
+      },
+    });
 
-  await prisma.tokenSettings.create({
-    data: {
-      tokenType: REFRESH_TOKEN,
-      expiresIn: '7d',
-      secret: generatePassword(32),
-    },
-  });
+    await prisma.tokenSettings.create({
+      data: {
+        tokenType: REFRESH_TOKEN,
+        expiresIn: '7d',
+        secret: generatePassword(32),
+      },
+    });
+  } catch (e) {
+    if (!(e instanceof Prisma.PrismaClientKnownRequestError)) throw e;
+    if (e.code === 'P2002') {
+      console.log('Token setings already exist');
+      return;
+    } else {
+      throw e;
+    }
+  }
 };
 
 const load = async () => {

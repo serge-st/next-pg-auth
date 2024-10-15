@@ -34,4 +34,5 @@ LICENSE
 README.md
 postgres-data
 .next
-password.txt
+app-setup
+app-setup/password.txt

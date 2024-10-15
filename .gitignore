@@ -40,4 +40,5 @@ next-env.d.ts
 postgres-data
 
 # password file genereted after seeding
-password.txt
+app-setup
+app-setup/password.txt
