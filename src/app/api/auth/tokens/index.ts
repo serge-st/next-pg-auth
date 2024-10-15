@@ -5,7 +5,7 @@ import { ApiErrorReponse } from '@/lib/api';
 import jwt from 'jsonwebtoken';
 import ms from 'ms';
 import sha256 from 'crypto-js/sha256';
-import { REFRESH_TOKEN } from '@/lib/constants';
+import { REFRESH_TOKEN, ACCESS_TOKEN } from '@/lib/constants';
 
 export async function getTokenSettings() {
   return await prisma.tokenSettings.findMany();
@@ -42,7 +42,7 @@ export async function generateTokens(
   const payload = { sub: email, roles };
 
   const tokenSettings = await getTokenSettings();
-  const atExpiration = tokenSettings.find((ts) => ts.tokenType === 'access_token')?.expiresIn;
+  const atExpiration = tokenSettings.find((ts) => ts.tokenType === ACCESS_TOKEN)?.expiresIn;
   const rtExpiration = tokenSettings.find((ts) => ts.tokenType === REFRESH_TOKEN)?.expiresIn;
 
   if (!atExpiration || !rtExpiration)
