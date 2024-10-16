@@ -47,7 +47,7 @@ const addDomainAdminUser = async () => {
     const email = process.env.ADMIN_EMAIL;
     const password = generatePassword(16);
     await addUser(email, password, 'admin');
-    const text = `# Admin User Credentials:\n${email}\n${password}`;
+    const text = `# Admin User Credentials:\n${email}\n${password}\n`;
     fs.writeFileSync(path.join(__dirname, '..', 'app-setup', 'password.txt'), text);
   } catch (e) {
     if (!(e instanceof Prisma.PrismaClientKnownRequestError)) throw e;
