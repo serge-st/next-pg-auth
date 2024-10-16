@@ -7,6 +7,9 @@ RUN npm install -g pnpm@9.7.1 && pnpm install
 
 COPY . .
 
+ARG NEXT_PUBLIC_URL
+ENV NEXT_PUBLIC_URL=${NEXT_PUBLIC_URL}
+
 RUN pnpm prisma:generate && pnpm build
 
 EXPOSE 3000
